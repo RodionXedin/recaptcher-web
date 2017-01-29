@@ -21,8 +21,13 @@ public class Customer {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
+    private String email;
     private String firstName;
     private String lastName;
     private String password;
 
+    public Customer(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }

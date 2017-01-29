@@ -4,6 +4,7 @@ import com.recaptcher.Service.LogonService;
 import com.recaptcher.entity.Customer;
 import com.recaptcher.repository.CustomerRepository;
 import com.recaptcher.utils.SessionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class LoginController {
     @Autowired
     private CustomerRepository customerRepository;
 
+
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "application/json")
     public String checkLogin() {
         HttpSession session = SessionUtils.getSession();
@@ -42,11 +44,24 @@ public class LoginController {
     }
 
 
+    @RequestMapping(value = "/register_customer", method = RequestMethod.POST, produces = "application/json")
+    public String registerCustomer(String email, String password, String confirmation) {
+        HttpSession session = SessionUtils.getSession();
+
+        if (StringUtils.isNotEmpty(email) && StringUtils.isNotEmpty(password) && StringUtils.isNotEmpty(confirmation) && password.equals(confirmation)) {
+            Customer customer = new Customer(email, password);
+            customerRepository.save(customer);
+            SessionUtils.getSession().setAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute(), customer);
+            return addBasicUserInfo(success(), customer).toString();
+        } else return failure().toString();
+    }
+
+
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
     public String login(@RequestParam(value = "name", required = false) String name,
                         @RequestParam(value = "password", required = false) String password, @RequestParam Map<String, String> params) {
 
-        Customer customer = customerRepository.findByLastName(name).get(0);
+        Customer customer = customerRepository.findByEmail(name);
 
         HttpSession session = SessionUtils.getSession();
 
@@ -59,7 +74,7 @@ public class LoginController {
             }
         }
 
-        return addBasicUserInfo(success(), customer, newUser).toString();
+        return addBasicUserInfo(success(), customer).toString();
     }
 
 
