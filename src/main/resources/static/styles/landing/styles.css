@@ -176,9 +176,8 @@ footer {
 }
 
 .registration-card{
+  margin-left: 35%;
   z-index: 999;
-  float: right;
-  margin-left: 30%;
   margin-top: 2%;
   width: 41%;
 }

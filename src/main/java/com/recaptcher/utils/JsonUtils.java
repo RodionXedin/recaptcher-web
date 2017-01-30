@@ -13,6 +13,7 @@ public class JsonUtils {
     private static final String SUCCESS = "success";
     private static final String FAILURE = "failure";
     private static final String USER_NAME_JSON_ATTRIBUTE = "userName";
+    private static final String USER_EMAIL_JSON_ATTRIBUTE = "email";
     private static final String NEW_USER_JSON_ATTRIBUTE = "newUser";
     public static final String ERROR_JSON_ATTRIBUTE = "error";
 
@@ -28,11 +29,13 @@ public class JsonUtils {
     public static JSONObject addBasicUserInfo(JSONObject jsonObject, Customer customer) {
 
         return jsonObject.put(USER_NAME_JSON_ATTRIBUTE, customer.getFirstName())
+                .put(USER_EMAIL_JSON_ATTRIBUTE, customer.getEmail())
                 .put(NEW_USER_JSON_ATTRIBUTE, false);
     }
 
     public static JSONObject addBasicUserInfo(JSONObject jsonObject, Customer customer, boolean newUser) {
         return jsonObject.put(USER_NAME_JSON_ATTRIBUTE, customer.getFirstName())
+                .put(USER_EMAIL_JSON_ATTRIBUTE, customer.getEmail())
                 .put(NEW_USER_JSON_ATTRIBUTE, newUser);
     }
 

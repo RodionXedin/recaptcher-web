@@ -48,24 +48,33 @@ public class LoginController {
     public String registerCustomer(String email, String password, String confirmation) {
         HttpSession session = SessionUtils.getSession();
 
-        if (StringUtils.isNotEmpty(email) && StringUtils.isNotEmpty(password) && StringUtils.isNotEmpty(confirmation) && password.equals(confirmation)) {
-            Customer customer = new Customer(email, password);
-            customerRepository.save(customer);
-            SessionUtils.getSession().setAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute(), customer);
-            return addBasicUserInfo(success(), customer).toString();
-        } else return failure().toString();
+        if (StringUtils.isEmpty(email) || StringUtils.isEmpty(password) || StringUtils.isEmpty(confirmation)) {
+            return failure().put("message", "Please fill in all fields").toString();
+        }
+
+        if (!password.equals(confirmation)) {
+            return failure().put("message", "Passwords should match").toString();
+        }
+
+        if(customerRepository.findByEmail(email) != null){
+            return failure().put("message", "Sorry, but this email is already taken :(").toString();
+        }
+
+        Customer customer = new Customer(email, password);
+        customerRepository.save(customer);
+        SessionUtils.getSession().setAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute(), customer);
+        return addBasicUserInfo(success(), customer).toString();
     }
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
-    public String login(@RequestParam(value = "name", required = false) String name,
+    public String login(@RequestParam(value = "email", required = false) String email,
                         @RequestParam(value = "password", required = false) String password, @RequestParam Map<String, String> params) {
 
-        Customer customer = customerRepository.findByEmail(name);
+        Customer customer = customerRepository.findByEmail(email);
 
         HttpSession session = SessionUtils.getSession();
 
-        boolean newUser = false;
         if (customer != null) {
             if (customer.getPassword().equals(password)) {
                 session.setAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute(), customer);

@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.teal-blue.min.css"/>
     <script defer="true" src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="js/recaptcher.js"></script>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps."/>
@@ -85,7 +86,7 @@
                     <ul class="nav navbar-nav">
                         <li><a href="#features" class="scroll-to">Features</a></li>
                         <li><a href="#text">Documentation</a></li>
-                        <li><a id="user-info-href" href="/signin">Sign In</a></li>
+                        <li><a id="user_info_href" href="login">Sign In</a></li>
                     </ul>
                     <a href="/register" data-target="#get-started" class="btn navbar-btn btn-ghost">Register</a>
                 </div>
@@ -107,10 +108,10 @@
                 </div>
                 <div class="registration-card demo-card-wide mdl-card mdl-shadow--2dp ">
                     <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text">Registration</h2>
+                        <h2 class="mdl-card__title-text">Sign in</h2>
                     </div>
                     <div class="mdl-card__supporting-text">
-                        <form name="registration" id="registrationForm" action="register_customer" method="post">
+                        <form id="registrationForm" action="register_customer" method="post">
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                                 <input class="mdl-textfield__input" type="text" id="email" name="email"/>
                                 <label class="mdl-textfield__label" for="email">Your email</label>
@@ -120,16 +121,11 @@
                                 <input class="mdl-textfield__input" type="password" id="password" name="password"/>
                                 <label class="mdl-textfield__label" for="password">Password</label>
                             </div>
-                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input class="mdl-textfield__input" type="password" id="confirmation"
-                                       name="confirmation"/>
-                                <label class="mdl-textfield__label" for="confirmation">Confirmation</label>
-                            </div>
                         </form>
                     </div>
                     <div class="mdl-card__actions mdl-card--border">
                         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-                           onclick="registerCustomer()">Register</a>
+                           onclick="signin()">Sign in</a>
                     </div>
                 </div>
 
@@ -151,8 +147,6 @@
         integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
         crossorigin="anonymous"></script>
 <script src="js/recaptcher.js"></script>
-<script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
-
 
 </body>
 </html>

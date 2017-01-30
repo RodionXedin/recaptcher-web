@@ -32,15 +32,27 @@ public class MainController {
         return "landing";
     }
 
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET, produces = "application/json")
+    public String logout() {
+        HttpSession session = SessionUtils.getSession();
+        session.removeAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute());
+        return dashboard()  ;
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String register() {
         return "registration";
     }
 
+    @RequestMapping(value = "/signin", method = RequestMethod.GET)
+    public String signin() {
+        return "signin";
+    }
 
 
     @RequestMapping(value = "/dashboard")
     public String dashboard() {
-        return "main";
+        return "dashboard";
     }
 }
