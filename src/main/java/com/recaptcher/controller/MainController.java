@@ -37,7 +37,7 @@ public class MainController {
     public String logout() {
         HttpSession session = SessionUtils.getSession();
         session.removeAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute());
-        return dashboard()  ;
+        return serveMain(null)  ;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
