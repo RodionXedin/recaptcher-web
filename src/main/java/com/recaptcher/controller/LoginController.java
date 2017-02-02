@@ -1,11 +1,11 @@
 package com.recaptcher.controller;
 
+import com.recaptcher.Service.ApiService;
 import com.recaptcher.Service.LogonService;
 import com.recaptcher.entity.Customer;
 import com.recaptcher.repository.CustomerRepository;
 import com.recaptcher.utils.SessionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Map;
 
 import static com.recaptcher.utils.JsonUtils.*;
@@ -28,6 +29,9 @@ public class LoginController {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private ApiService apiService;
 
 
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "application/json")
@@ -45,7 +49,7 @@ public class LoginController {
 
 
     @RequestMapping(value = "/register_customer", method = RequestMethod.POST, produces = "application/json")
-    public String registerCustomer(String email, String password, String confirmation) {
+    public String registerCustomer(String email, String password, String confirmation) throws IOException {
         HttpSession session = SessionUtils.getSession();
 
         if (StringUtils.isEmpty(email) || StringUtils.isEmpty(password) || StringUtils.isEmpty(confirmation)) {
@@ -62,6 +66,8 @@ public class LoginController {
 
         Customer customer = new Customer(email, password);
         customerRepository.save(customer);
+
+        apiService.createUser(customerRepository.findByEmail(customer.getEmail()).getId().toString());
         SessionUtils.getSession().setAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute(), customer);
         return addBasicUserInfo(success(), customer).toString();
     }
