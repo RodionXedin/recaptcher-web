@@ -6,12 +6,16 @@ import com.recaptcher.entity.Customer;
 import com.recaptcher.repository.CustomerRepository;
 import com.recaptcher.utils.SessionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.simplejavamail.email.Email;
+import org.simplejavamail.mailer.Mailer;
+import org.simplejavamail.mailer.config.TransportStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.Message;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Map;
@@ -51,6 +55,19 @@ public class LoginController {
     @RequestMapping(value = "/register_customer", method = RequestMethod.POST, produces = "application/json")
     public String registerCustomer(String email, String password, String confirmation) throws IOException {
         HttpSession session = SessionUtils.getSession();
+
+        final Email emailToSend = new Email();
+        emailToSend.setFromAddress("Recaptcher", "rodion.shkrobot@gmail.com");
+        emailToSend.addRecipient("Rodion", "rodion.shkrobot@gmail.com", Message.RecipientType.TO);
+        emailToSend.addRecipient("Sergey", "sergey.parahin@gmail.com", Message.RecipientType.TO);
+//        email.setText("User requested funds add. See info below");
+        emailToSend.setTextHTML(String.format("<b>New User registered. <br/> Email : %s </b>",email));
+        emailToSend.setSubject("New User Registration");
+
+//        new Mailer("smtp.gmail.com", 25, "rodion.shkrobot", "Ghblevfnm1!", TransportStrategy.SMTP_TLS).sendMail(email);
+//        new Mailer("smtp.gmail.com", 587, "rodion.shkrobot", "Ghblevfnm1!", TransportStrategy.SMTP_TLS).sendMail(email);
+        new Mailer("email-smtp.us-east-1.amazonaws.com", 587, "AKIAJDMJYRL3KBBRQM2Q", "AuEmPTpJpEx9zo0mApU+LPvgMkGhLab7jgJ7U9xRmZUT", TransportStrategy.SMTP_TLS).sendMail(emailToSend);
+
 
         if (StringUtils.isEmpty(email) || StringUtils.isEmpty(password) || StringUtils.isEmpty(confirmation)) {
             return failure().put("message", "Please fill in all fields").toString();

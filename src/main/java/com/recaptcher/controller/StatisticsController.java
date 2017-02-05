@@ -32,6 +32,7 @@ public class StatisticsController {
         Customer customer = (Customer) session.getAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute());
         if (customer != null) {
             JSONObject balanceTable = apiService.getBalanceTable(String.valueOf(customer.getId()));
+
             return addBasicUserInfo(success(), customer).put("tableData",balanceTable).toString();
         }
 

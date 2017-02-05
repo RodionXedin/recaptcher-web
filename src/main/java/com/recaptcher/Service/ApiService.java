@@ -22,7 +22,7 @@ public class ApiService {
     @Value("${private.api.key}")
     private String privateApiKey;
 
-    @Value("${api.url}")
+    @Value("${api_url}")
     private String apiUrl;
 
     private static final MediaType JSON

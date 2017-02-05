@@ -1,6 +1,7 @@
 package com.recaptcher.controller;
 
 import com.recaptcher.Service.ApiService;
+import com.recaptcher.entity.Customer;
 import com.recaptcher.repository.CustomerRepository;
 import com.recaptcher.utils.SessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,12 @@ public class MainController {
     public String logout() {
         HttpSession session = SessionUtils.getSession();
         session.removeAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute());
-        return serveMain(null)  ;
+        return serveMain(null);
+    }
+
+    @RequestMapping(value = "/documentation", method = RequestMethod.GET)
+    public String documentation() {
+        return "documentation";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -49,14 +55,32 @@ public class MainController {
         return "signin";
     }
 
-
     @RequestMapping(value = "/dashboard")
     public String dashboard() {
-        return "dashboard";
+        return userSignedIn() ? "dashboard" : signin();
+
     }
 
     @RequestMapping(value = "/settings")
     public String settings() {
-        return "settings";
+        return userSignedIn() ? "settings" : signin();
     }
+
+
+    @RequestMapping(value = "/useragreement")
+    public String privacy() {
+        return "useragreement";
+    }
+
+    @RequestMapping(value = "/privacy")
+    public String userAgreement() {
+        return "privacypolicy";
+    }
+
+    private boolean userSignedIn() {
+        HttpSession session = SessionUtils.getSession();
+        Customer customer = (Customer) session.getAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute());
+        return customer != null;
+    }
+
 }

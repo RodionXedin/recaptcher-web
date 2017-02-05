@@ -42,6 +42,17 @@
           href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css"/>
+    <style>
+        .mdl-spinner {
+            width: 84px;
+            height: 84px;
+        }
+
+        .mdl-spinner__circle {
+            border-width: 9px;
+        }
+    </style>
+
     <link rel="stylesheet" href="styles/styles.css"/>
     <style>
         #view-source {
@@ -61,22 +72,21 @@
         <div class="mdl-layout__header-row">
             <span class="mdl-layout-title">Home</span>
             <div class="mdl-layout-spacer"></div>
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-                <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
-                    <i class="material-icons">search</i>
-                </label>
-                <div class="mdl-textfield__expandable-holder">
-                    <input class="mdl-textfield__input" type="text" id="search"/>
-                    <label class="mdl-textfield__label" for="search">Enter your query...</label>
-                </div>
-            </div>
+            <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;expandable">-->
+            <!--<label class="mdl-button mdl-js-button mdl-button&#45;&#45;icon" for="search">-->
+            <!--<i class="material-icons">search</i>-->
+            <!--</label>-->
+            <!--<div class="mdl-textfield__expandable-holder">-->
+            <!--<input class="mdl-textfield__input" type="text" id="search"/>-->
+            <!--<label class="mdl-textfield__label" for="search">Enter your query...</label>-->
+            <!--</div>-->
+            <!--</div>-->
             <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
                 <i class="material-icons">more_vert</i>
             </button>
             <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
-                <li class="mdl-menu__item">About</li>
-                <li class="mdl-menu__item">Contact</li>
-                <li class="mdl-menu__item">Legal information</li>
+                <li class="mdl-menu__item"><a href="useragreement">Legal information</a> </li>
+                <li class="mdl-menu__item"><a href="privacy">Privacy policy</a> </li>
             </ul>
         </div>
     </header>
@@ -86,15 +96,6 @@
             <div class="demo-avatar-dropdown">
                 <span id="user-info-href">hello@example.com</span>
                 <div class="mdl-layout-spacer"></div>
-                <button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
-                    <i class="material-icons" role="presentation">arrow_drop_down</i>
-                    <span class="visuallyhidden">Accounts</span>
-                </button>
-                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="accbtn">
-                    <li class="mdl-menu__item">hello@example.com</li>
-                    <li class="mdl-menu__item">info@example.com</li>
-                    <li class="mdl-menu__item"><i class="material-icons">add</i>Add another account...</li>
-                </ul>
             </div>
         </header>
         <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
@@ -110,50 +111,91 @@
                                                              role="presentation">navigate_next</i>Logout</a>
         </nav>
     </div>
-    <main class="mdl-layout__content mdl-color--grey-100">
+    <div id="demo-toast-example" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>
+    <div style="
+    position: absolute;
+    left: 48%;
+    top: 87%;
+    z-index: 999;
+">
+        <div class="mdl-spinner mdl-js-spinner"></div>
+    </div>
+    <main id="mainContent" class="mdl-layout__content mdl-color--grey-100">
         <div class="mdl-grid demo-content">
             <div class="demo-card-wide mdl-card mdl-shadow--2dp" style="margin: 5%">
-            <div class="mdl-card__title">
-                <h2 class="mdl-card__title-text">Balance</h2>
-            </div>
-            <div class="mdl-card__supporting-text">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Balance</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
     <span class="mdl-chip mdl-chip--contact">
 <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white">$</span>
 <span class="mdl-chip__text" id="balanceValue">balance</span>
 </span>
-            </div>
-            <div onclick="addBalance()" class="mdl-card__actions mdl-card--border">
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
 
-                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                    Add Balance
-                </a>
+                    <a id="show-dialog" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                        Add Balance
+                    </a>
+                </div>
             </div>
-        </div>
 
-        <div class="demo-card-wide mdl-card mdl-shadow--2dp" style="margin: 5%;">
-            <div class="mdl-card__title">
-                <h2 class="mdl-card__title-text">API Key</h2>
-            </div>
-            <div class="mdl-card__supporting-text">
+            <div class="demo-card-wide mdl-card mdl-shadow--2dp" style="margin: 5%;">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">API Key</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
       <span class="mdl-chip mdl-chip--contact">
     <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white">A</span>
     <span class="mdl-chip__text" id="apiKeyValue">api key</span>
 </span></div>
-            <div onclick="regenerateApiKey()" class="mdl-card__actions mdl-card--border">
-                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                    Regenerate API key
-                </a>
+                <div onclick="regenerateApiKey()" class="mdl-card__actions mdl-card--border">
+                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                        Regenerate API key
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
+        <dialog class="mdl-dialog">
+            <h4 class="mdl-dialog__title">Add funds</h4>
+            <div class="mdl-dialog__content">
+                <p>
+                    Please, enter the amount you want to add below.
+                    Also, we will need some more information about you, so we could create a payment request.
 
+                <div style="font-weight: 700">We do not store this data anywhere after payment is complete.</div>
+
+                <form name="addfunds" id="addfundsform" action="addfunds" method="post">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="text" id="firstName" name="firstName"/>
+                        <label class="mdl-textfield__label" for="firstName">First Name</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                         style="display: flex">
+                        <input class="mdl-textfield__input" type="text" id="lastName" name="lastName"/>
+                        <label class="mdl-textfield__label" for="lastName">Last name</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="number" id="fundsAmount"
+                               name="confirmation"/>
+                        <label class="mdl-textfield__label" for="fundsAmount">Amount</label>
+                    </div>
+                    <div> We will send you an email with a link to secure Payoneer.com system, where you will be able to pay using your credit card.</div>
+                </form>
+
+                </p>
+            </div>
+            <div class="mdl-dialog__actions">
+                <button type="button" class="mdl-button" onclick="addFunds()">Add funds</button>
+                <button type="button" class="mdl-button close">Cancel</button>
+            </div>
+        </dialog>
     </main>
 </div>
 
-<a href="https://github.com/google/material-design-lite/blob/mdl-1.x/templates/dashboard/" target="_blank"
-   id="view-source"
-   class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored mdl-color-text--white">View
-    Source</a>
 <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 </body>
 </html>
