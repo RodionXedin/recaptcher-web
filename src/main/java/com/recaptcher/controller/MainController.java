@@ -77,6 +77,11 @@ public class MainController {
         return "privacypolicy";
     }
 
+//    @RequestMapping(value = "/payeer_301708164.txt")
+//    public String payeer() {
+    //        return "payeer_301708164";
+//    }
+
     private boolean userSignedIn() {
         HttpSession session = SessionUtils.getSession();
         Customer customer = (Customer) session.getAttribute(SessionUtils.SessionAttributes.USER_ATTIBUTE.getAttribute());

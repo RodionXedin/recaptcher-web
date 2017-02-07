@@ -23,7 +23,8 @@ function initLoginButton() {
 
 function populate_user_info_div(data) {
     $("#user-info-href").html(data.email);
-    $("#user-info-href").attr("href", "profile");
+    $("#user-info-href").attr("href", "dashboard");
+    $("#registerButton").hide();
 }
 
 function initUserScripts() {
@@ -180,9 +181,9 @@ function getHeader(title) {
     } else if (title == "failed") {
         return "Failed requests";
     } else if (title == "cachedPrepared") {
-        return "Requests prepared";
+        return "Requests predicted";
     } else if (title == "cachedUsed") {
-        return "Prepared requests used";
+        return "Predicted requests used";
     } else if (title == "succRatio") {
         return "Success Ratio";
     } else if (title == "cacheEffic") {
@@ -234,7 +235,14 @@ function getTableData() {
             };
             var jdata = data.tableData.statistics;
             var mydata = eval(jdata);
-            mydata.sort(function(a,b) { return new Date(a.datestamp) > new Date(b.datestamp)});
+
+            String.prototype.replaceAll = function(search, replacement) {
+                var target = this;
+                return target.replace(new RegExp(search, 'g'), replacement);
+            };
+            mydata.sort(function (a, b) {
+                return new Date(a.datestamp.replaceAll("-","/")) < new Date(b.datestamp.replaceAll("-","/"))
+            });
             var table = $.makeTable(mydata);
             $(table).appendTo("#tableContent");
 
@@ -245,6 +253,11 @@ function getTableData() {
             var datestamp = [];
             var cachedPrepared = [];
             var cachedUsed = [];
+
+
+            data.tableData.statistics.sort(function (a, b) {
+                return new Date(a.datestamp.replaceAll("-","/")) > new Date(b.datestamp.replaceAll("-","/"))
+            });
             $.each(eval(data.tableData.statistics), function (index, value) {
                 successful.push(value["successful"]);
                 failure.push(value["failed"]);
@@ -254,16 +267,16 @@ function getTableData() {
             });
 
             chartData.datasets.push({
-                fill: false, label: "Successful", data: successful, backgroundColor: "rgba(75,192,192,0.4)",
+                fill: true, label: "Successful", data: successful, backgroundColor: "rgba(75,192,192,0.2)",
                 borderColor: "rgba(75,192,192,1)", pointBorderColor: "rgba(75,192,192,1)",
                 pointBackgroundColor: "#fff"
             });
             chartData.datasets.push({
                 borderCapStyle: 'butt',
-                fill: false,
+                fill: true,
                 label: "Failure",
                 data: failure,
-                backgroundColor: "rgba(232, 25, 25, 0.64)",
+                backgroundColor: "rgba(232, 25, 25, 0.2)",
                 borderColor: "rgba(232, 25, 25, 0.64)",
                 pointBorderColor: "rgba(232, 25, 25, 0.64)",
                 pointBackgroundColor: "#fff"
@@ -289,18 +302,24 @@ function getTableData() {
             chartData2.datasets = [];
             chartData2.labels = datestamp;
             chartData2.datasets.push({
-                fill: false, label: "Prepared", data: cachedPrepared, backgroundColor: "rgba(75,192,192,0.4)",
-                borderColor: "rgba(75,192,192,1)", pointBorderColor: "rgba(75,192,192,1)",
+                fill: true,
+                label: "Successful",
+                data: successful,
+                fillColor: "rgba(75,192,192,0.2)",
+                backgroundColor: "rgba(75,192,192,0.2)",
+                borderColor: "rgba(75,192,192,1)",
+                pointBorderColor: "rgba(75,192,192,1)",
                 pointBackgroundColor: "#fff"
             });
             chartData2.datasets.push({
                 borderCapStyle: 'butt',
-                fill: false,
-                label: "Used",
+                fill: true,
+                label: "Predicted",
                 data: cachedUsed,
-                backgroundColor: "rgba(232, 25, 25, 0.64)",
-                borderColor: "rgba(232, 25, 25, 0.64)",
-                pointBorderColor: "rgba(232, 25, 25, 0.64)",
+                fillColor: "rgba(54, 162, 235,0.2)",
+                backgroundColor: "rgba(54, 162, 235,0.2)",
+                borderColor: "rgba(54, 162, 235,0.64)",
+                pointBorderColor: "rgba(54, 162, 235,0.64)",
                 pointBackgroundColor: "#fff"
             });
 
@@ -316,36 +335,36 @@ function getTableData() {
                     }
                 }
             });
-
-            $("#succRatioChart").data("persent", todaySuccRatio);
-            $("#efficRatioChart").data("persent", todayCacheEfficiency);
-
-            new EasyPieChart(document.querySelector('#succRatioChart'), {
-                easing: 'easeOutElastic',
-                delay: 3000,
-                barColor: '#69c',
-                trackColor: '#ace',
-                scaleColor: false,
-                lineWidth: 20,
-                trackWidth: 16,
-                lineCap: 'butt',
-                onStep: function (from, to, percent) {
-                    this.el.children[0].innerHTML = Math.round(percent);
-                }
-            });
-            new EasyPieChart(document.querySelector('#efficRatioChart'), {
-                easing: 'easeOutElastic',
-                delay: 3000,
-                barColor: '#69c',
-                trackColor: '#ace',
-                scaleColor: false,
-                lineWidth: 20,
-                trackWidth: 16,
-                lineCap: 'butt',
-                onStep: function (from, to, percent) {
-                    this.el.children[0].innerHTML = Math.round(percent);
-                }
-            });
+            //
+            // $("#succRatioChart").data("persent", todaySuccRatio);
+            // $("#efficRatioChart").data("persent", todayCacheEfficiency);
+            //
+            // new EasyPieChart(document.querySelector('#succRatioChart'), {
+            //     easing: 'easeOutElastic',
+            //     delay: 3000,
+            //     barColor: '#69c',
+            //     trackColor: '#ace',
+            //     scaleColor: false,
+            //     lineWidth: 20,
+            //     trackWidth: 16,
+            //     lineCap: 'butt',
+            //     onStep: function (from, to, percent) {
+            //         this.el.children[0].innerHTML = Math.round(percent);
+            //     }
+            // });
+            // new EasyPieChart(document.querySelector('#efficRatioChart'), {
+            //     easing: 'easeOutElastic',
+            //     delay: 3000,
+            //     barColor: '#69c',
+            //     trackColor: '#ace',
+            //     scaleColor: false,
+            //     lineWidth: 20,
+            //     trackWidth: 16,
+            //     lineCap: 'butt',
+            //     onStep: function (from, to, percent) {
+            //         this.el.children[0].innerHTML = Math.round(percent);
+            //     }
+            // });
 
         }
     });
