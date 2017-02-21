@@ -31,6 +31,110 @@ function initUserScripts() {
     initLoginButton();
 };
 
+
+function addFunds() {
+    var curr = 'USD'; // $("#currencyDropDown").val();
+    var amountStr = $("#fundsAmount").val();
+    var paymentMethod = $('input[name=paymentMethod]:checked', '#addfundsform').val();
+
+    console.log(paymentMethod);
+
+    if (!isPositiveInteger(amountStr)) {
+        alert("Amount should be a number! For example, 25.");
+        return;
+    }
+
+    var amount = parseInt(amountStr);
+
+    if (curr == 'USD' && amount < 5) {
+        alert("Min amount is 5 for USD.");
+        return;
+    } /*else if (curr == 'RUB' && amount < 60) {
+        alert("Min amount is 60 for RUB.");
+        return;
+    }*/
+
+    if (paymentMethod == 'freshbooks') {
+        if (!$("#customerEmail").val()) {
+            alert("Please, enter a valid email.");
+            return;
+        }
+
+        if (!$("#customerName").val()) {
+            alert("Please, enter your name or Company name.");
+            return;
+        }
+
+        if (!$("#customerCountry").val()) {
+            alert("Please, enter a country");
+            return;
+        }
+    }
+
+    spinnerStart();
+
+    if (paymentMethod == 'payeer') {
+        payWithPayoneer(amount, curr);
+    } else {
+        payWithFreshbooks(amount, $("#customerEmail").val(), $("#customerName").val(), $("#customerCountry").val());
+    }
+}
+
+function payWithPayoneer(amount, curr) {
+    spinnerStart();
+
+    $.getJSON("/payeer/payment-data?amount=" + amount + "&curr=" + curr, function( data ) {
+        spinnerStop();
+
+        $.each( data, function( key, val ) {
+            $("input[name=" + key + "]").val(val);
+        });
+
+        $("#payeer-form").submit();
+    }).fail(function() {
+        spinnerStop();
+        var snackbarContainer = document.querySelector('#demo-toast-example');
+        var showToastButton = document.querySelector('#demo-show-toast');
+        var data = { message: "Unexpected error." };
+        snackbarContainer.MaterialSnackbar.showSnackbar(data);
+    });
+}
+
+function payWithFreshbooks(amount, email, name, country) {
+    $.ajax({
+        method: "POST",
+        url: "/freshbooks/addFunds",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "amount": amount,
+            "email": email,
+            "name": name,
+            "country": country })
+    }).done(function( data ) {
+        spinnerStop();
+        var snackbarContainer = document.querySelector('#demo-toast-example');
+        var showToastButton = document.querySelector('#demo-show-toast');
+        var data = { message: "We will send an invoice in 1-2 hours to the email:" + email };
+        snackbarContainer.MaterialSnackbar.showSnackbar(data);
+    }).fail(function() {
+        spinnerStop();
+        var snackbarContainer = document.querySelector('#demo-toast-example');
+        var showToastButton = document.querySelector('#demo-show-toast');
+        var data = { message: "Unexpected error." };
+        snackbarContainer.MaterialSnackbar.showSnackbar(data);
+    });
+}
+
+
+function isPositiveInteger(s)
+{
+    return !!s.match(/^[0-9]+$/);
+    // or Rob W suggests
+    return /^\d+$/.test(s);
+}
+
+
+/*
 function addFunds() {
     spinnerStart();
     $.ajax("/add_funds", {
@@ -60,6 +164,7 @@ function addFunds() {
         }
     });
 }
+*/
 
 function spinnerStart() {
     $(".mdl-layout__content").css('opacity', 0.5);

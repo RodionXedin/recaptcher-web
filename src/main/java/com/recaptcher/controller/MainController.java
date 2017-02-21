@@ -32,6 +32,15 @@ public class MainController {
         return "landing";
     }
 
+    @RequestMapping(value = "/ru")
+    public String serveMainRU(Model model) {
+        return "landingRU";
+    }
+
+    @RequestMapping(value = "/en")
+    public String serveMainEN(Model model) {
+        return "landing";
+    }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET, produces = "application/json")
     public String logout() {
@@ -58,8 +67,9 @@ public class MainController {
     @RequestMapping(value = "/dashboard")
     public String dashboard() {
         return userSignedIn() ? "dashboard" : signin();
-
     }
+
+
 
     @RequestMapping(value = "/settings")
     public String settings() {
@@ -76,6 +86,22 @@ public class MainController {
     public String userAgreement() {
         return "privacypolicy";
     }
+
+
+    // -------------- Payeer START --------------
+
+    @RequestMapping(value = "/payeer-success")
+    public String payeerSuccess() {
+        return "payeer-success";
+    }
+
+    @RequestMapping(value = "/payeer-fail")
+    public String payeerFail() {
+        return "payeer-fail";
+    }
+
+    // -------------- Payeer END --------------
+
 
 //    @RequestMapping(value = "/payeer_301708164.txt")
 //    public String payeer() {

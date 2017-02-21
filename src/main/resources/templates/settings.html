@@ -52,7 +52,7 @@
             border-width: 9px;
         }
     </style>
-
+    <link rel="stylesheet" href="css/custom.css"/>
     <link rel="stylesheet" href="styles/styles.css"/>
     <style>
         #view-source {
@@ -70,7 +70,7 @@
 <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
     <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
         <div class="mdl-layout__header-row">
-            <span class="mdl-layout-title">Home</span>
+            <span class="mdl-layout-title">Settings</span>
             <div class="mdl-layout-spacer"></div>
             <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;expandable">-->
             <!--<label class="mdl-button mdl-js-button mdl-button&#45;&#45;icon" for="search">-->
@@ -162,37 +162,61 @@
         <dialog class="mdl-dialog">
             <h4 class="mdl-dialog__title">Add funds</h4>
             <div class="mdl-dialog__content">
-                <p>
-                    Please, enter the amount you want to add below.
-                    Also, we will need some more information about you, so we could create a payment request.
-
-                <div style="font-weight: 700">We do not store this data anywhere after payment is complete.</div>
-
+                    Please, enter the amount (at least 5 USD) you want to add below.
+                    <br/>
+                    <!--MasterCard is not supported: * Use RUB to pay using MasterCard-->
                 <form name="addfunds" id="addfundsform" action="addfunds" method="post">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="text" id="firstName" name="firstName"/>
-                        <label class="mdl-textfield__label" for="firstName">First Name</label>
-                    </div>
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
-                         style="display: flex">
-                        <input class="mdl-textfield__input" type="text" id="lastName" name="lastName"/>
-                        <label class="mdl-textfield__label" for="lastName">Last name</label>
-                    </div>
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="number" id="fundsAmount"
-                               name="confirmation"/>
+                        <input class="mdl-textfield__input" type="number" id="fundsAmount"/>
                         <label class="mdl-textfield__label" for="fundsAmount">Amount</label>
                     </div>
-                    <div> We will send you an email with a link to secure Payoneer.com system, where you will be able to pay using your credit card.</div>
-                </form>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 
-                </p>
+                        <input class="mdl-textfield__input" type="text" id="customerName"/>
+                        <label class="mdl-textfield__label" for="customerName">Full Name or Company Name (only for Freshbooks)</label>
+            </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="text" id="customerCountry"/>
+                        <label class="mdl-textfield__label" for="customerCountry">Country (only for Freshbooks)</label>
+                        </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="email" id="customerEmail"/>
+                        <label class="mdl-textfield__label" for="customerEmail">Email (only for Freshbooks)</label>
+            </div>
+            <!-- MasterCard (RUB) is not supported:
+                            <select id="currencyDropDown">
+                                <option value="USD">USD</option>
+                                <option value="RUB">RUB</option>
+                            </select>
+                            -->
+                    <br/>
+                    <input type="radio" name="paymentMethod" value="payeer" checked="checked"/> <img width="100px" src="images/payeer.png"/> <p>Bitcoin, VISA</p>
+                <input type="radio" name="paymentMethod" value="freshbooks"/> <img style="margin-bottom: 25px" width="100px" src="images/freshbooks.png"/> <p>You will receive an invoice on your email (in ~1-2 hours), where you can pay with VISA, MasterCard or American Express card</p>
+            </form>
+
             </div>
             <div class="mdl-dialog__actions">
                 <button type="button" class="mdl-button" onclick="addFunds()">Add funds</button>
                 <button type="button" class="mdl-button close">Cancel</button>
             </div>
         </dialog>
+
+        <form id="payeer-form" method="post" action="https://payeer.com/merchant/">
+            <input type="hidden" name="m_shop"/>
+            <input type="hidden" name="m_orderid"/>
+            <input type="hidden" name="m_amount"/>
+            <input type="hidden" name="m_curr"/>
+            <input type="hidden" name="m_desc"/>
+            <input type="hidden" name="m_sign"/>
+
+            <!--
+            A JSON array of data of additional parameters encrypted using the Rijindael-256 algorithm and encoded using a base64 algorithm.
+            <input type="hidden" name="m_params" value="">
+            -->
+
+            <input type="submit" name="m_process" value="Add Funds" style="display: none" />
+        </form>
+
     </main>
 </div>
 

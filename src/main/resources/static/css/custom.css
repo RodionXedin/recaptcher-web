@@ -1,1 +1,8 @@
 /* your styles go here */
+
+
+@media (min-width: 1200px) {
+    .mdl-dialog {
+        width: 500px
+    }
+}

@@ -56,30 +56,35 @@ public class LoginController {
     public String registerCustomer(String email, String password, String confirmation) throws IOException {
         HttpSession session = SessionUtils.getSession();
 
-        final Email emailToSend = new Email();
-        emailToSend.setFromAddress("Recaptcher", "rodion.shkrobot@gmail.com");
-        emailToSend.addRecipient("Rodion", "rodion.shkrobot@gmail.com", Message.RecipientType.TO);
-        emailToSend.addRecipient("Sergey", "sergey.parahin@gmail.com", Message.RecipientType.TO);
-//        email.setText("User requested funds add. See info below");
-        emailToSend.setTextHTML(String.format("<b>New User registered. <br/> Email : %s </b>",email));
-        emailToSend.setSubject("New User Registration");
-
-//        new Mailer("smtp.gmail.com", 25, "rodion.shkrobot", "Ghblevfnm1!", TransportStrategy.SMTP_TLS).sendMail(email);
-//        new Mailer("smtp.gmail.com", 587, "rodion.shkrobot", "Ghblevfnm1!", TransportStrategy.SMTP_TLS).sendMail(email);
-        new Mailer("email-smtp.us-east-1.amazonaws.com", 587, "AKIAJDMJYRL3KBBRQM2Q", "AuEmPTpJpEx9zo0mApU+LPvgMkGhLab7jgJ7U9xRmZUT", TransportStrategy.SMTP_TLS).sendMail(emailToSend);
-
-
         if (StringUtils.isEmpty(email) || StringUtils.isEmpty(password) || StringUtils.isEmpty(confirmation)) {
             return failure().put("message", "Please fill in all fields").toString();
+        }
+
+        if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+-=])(?=\\S+$).{8,}$")) {
+            return failure().put("message", "Password must be at least 8 symbols long, contain at least 1 upper case letter, " +
+                    "one special symbol and 1 number").toString();
         }
 
         if (!password.equals(confirmation)) {
             return failure().put("message", "Passwords should match").toString();
         }
 
-        if(customerRepository.findByEmail(email) != null){
+        if (customerRepository.findByEmail(email) != null) {
             return failure().put("message", "Sorry, but this email is already taken :(").toString();
         }
+
+
+        final Email emailToSend = new Email();
+        emailToSend.setFromAddress("Recaptcher", "rodion.shkrobot@gmail.com");
+        emailToSend.addRecipient("Rodion", "rodion.shkrobot@gmail.com", Message.RecipientType.TO);
+        emailToSend.addRecipient("Sergey", "sergey.parahin@gmail.com", Message.RecipientType.TO);
+//        email.setText("User requested funds add. See info below");
+        emailToSend.setTextHTML(String.format("<b>New User registered. <br/> Email : %s </b>", email));
+        emailToSend.setSubject("New User Registration");
+
+//        new Mailer("smtp.gmail.com", 25, "rodion.shkrobot", "Ghblevfnm1!", TransportStrategy.SMTP_TLS).sendMail(email);
+//        new Mailer("smtp.gmail.com", 587, "rodion.shkrobot", "Ghblevfnm1!", TransportStrategy.SMTP_TLS).sendMail(email);
+        new Mailer("email-smtp.us-east-1.amazonaws.com", 587, "AKIAJDMJYRL3KBBRQM2Q", "AuEmPTpJpEx9zo0mApU+LPvgMkGhLab7jgJ7U9xRmZUT", TransportStrategy.SMTP_TLS).sendMail(emailToSend);
 
         Customer customer = new Customer(email, password);
         customerRepository.save(customer);
