@@ -46,7 +46,7 @@ function addFunds() {
 
     var amount = parseInt(amountStr);
 
-    if (curr == 'USD' && amount < 5) {
+    if (curr == 'USD' && amount < 5)    {
         alert("Min amount is 5 for USD.");
         return;
     } /*else if (curr == 'RUB' && amount < 60) {
