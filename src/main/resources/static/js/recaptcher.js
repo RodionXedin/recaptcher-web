@@ -46,13 +46,14 @@ function addFunds() {
 
     var amount = parseInt(amountStr);
 
-    if (curr == 'USD' && amount < 5)    {
+    if (curr == 'USD' && amount < 5) {
         alert("Min amount is 5 for USD.");
         return;
-    } /*else if (curr == 'RUB' && amount < 60) {
-        alert("Min amount is 60 for RUB.");
-        return;
-    }*/
+    }
+    /*else if (curr == 'RUB' && amount < 60) {
+     alert("Min amount is 60 for RUB.");
+     return;
+     }*/
 
     if (paymentMethod == 'freshbooks') {
         if (!$("#customerEmail").val()) {
@@ -76,26 +77,26 @@ function addFunds() {
     if (paymentMethod == 'payeer') {
         payWithPayoneer(amount, curr);
     } else {
-        payWithFreshbooks(amount, $("#customerEmail").val(), $("#customerName").val(), $("#customerCountry").val());
+        payWithPaypal(amount, $("#customerEmail").val(), $("#customerName").val(), $("#customerCountry").val());
     }
 }
 
 function payWithPayoneer(amount, curr) {
     spinnerStart();
 
-    $.getJSON("/payeer/payment-data?amount=" + amount + "&curr=" + curr, function( data ) {
+    $.getJSON("/payeer/payment-data?amount=" + amount + "&curr=" + curr, function (data) {
         spinnerStop();
 
-        $.each( data, function( key, val ) {
+        $.each(data, function (key, val) {
             $("input[name=" + key + "]").val(val);
         });
 
         $("#payeer-form").submit();
-    }).fail(function() {
+    }).fail(function () {
         spinnerStop();
         var snackbarContainer = document.querySelector('#demo-toast-example');
         var showToastButton = document.querySelector('#demo-show-toast');
-        var data = { message: "Unexpected error." };
+        var data = {message: "Unexpected error."};
         snackbarContainer.MaterialSnackbar.showSnackbar(data);
     });
 }
@@ -109,25 +110,54 @@ function payWithFreshbooks(amount, email, name, country) {
             "amount": amount,
             "email": email,
             "name": name,
-            "country": country })
-    }).done(function( data ) {
+            "country": country
+        })
+    }).done(function (data) {
         spinnerStop();
         var snackbarContainer = document.querySelector('#demo-toast-example');
         var showToastButton = document.querySelector('#demo-show-toast');
-        var data = { message: "We will send an invoice in 1-2 hours to the email:" + email };
+        var data = {message: "We will send an invoice in 1-2 hours to the email:" + email};
         snackbarContainer.MaterialSnackbar.showSnackbar(data);
-    }).fail(function() {
+    }).fail(function () {
         spinnerStop();
         var snackbarContainer = document.querySelector('#demo-toast-example');
         var showToastButton = document.querySelector('#demo-show-toast');
-        var data = { message: "Unexpected error." };
+        var data = {message: "Unexpected error."};
         snackbarContainer.MaterialSnackbar.showSnackbar(data);
     });
 }
 
 
-function isPositiveInteger(s)
-{
+function payWithPaypal(amount, email, name, country) {
+    window.open("https://www.paypal.me/Recaptcher/" + amount);
+    $.ajax({
+        method: "POST",
+        url: "/paypall/addFunds",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "amount": amount,
+            "email": email
+        })
+    }).done(function (data) {
+        spinnerStop();
+        $("dialog")[0].close();
+        var snackbarContainer = document.querySelector('#demo-toast-example');
+        var showToastButton = document.querySelector('#demo-show-toast');
+        var data = {
+            message: "Thank you! We will process your payment as fast as possible ! ",
+            timeout: 15000
+        };
+        snackbarContainer.MaterialSnackbar.showSnackbar(data);
+    }).fail(function () {
+        spinnerStop();
+        var snackbarContainer = document.querySelector('#demo-toast-example');
+        var showToastButton = document.querySelector('#demo-show-toast');
+        var data = {message: "Unexpected error."};
+        snackbarContainer.MaterialSnackbar.showSnackbar(data);
+    });
+}
+
+function isPositiveInteger(s) {
     return !!s.match(/^[0-9]+$/);
     // or Rob W suggests
     return /^\d+$/.test(s);
@@ -135,36 +165,36 @@ function isPositiveInteger(s)
 
 
 /*
-function addFunds() {
-    spinnerStart();
-    $.ajax("/add_funds", {
-        method: 'POST',
-        data: {
-            firstName: $("#firstName").val(),
-            lastName: $("#lastName").val(),
-            fundsAmount: $("#fundsAmount").val()
-        },
-        success: function (data) {
-            spinnerStop();
-            if (data.result == "success") {
-                $("dialog").children(".mdl-dialog__actions").children(".mdl-button.close").click()
-                var snackbarContainer = document.querySelector('#demo-toast-example');
-                var showToastButton = document.querySelector('#demo-show-toast');
-                var data = {
-                    message: "Thank you! We will send the funds request to your email shortly.",
-                    timeout: 10000
-                };
-                snackbarContainer.MaterialSnackbar.showSnackbar(data);
-            } else {
-                var snackbarContainer = document.querySelector('#demo-toast-example');
-                var showToastButton = document.querySelector('#demo-show-toast');
-                var data = {message: data.message};
-                snackbarContainer.MaterialSnackbar.showSnackbar(data);
-            }
-        }
-    });
-}
-*/
+ function addFunds() {
+ spinnerStart();
+ $.ajax("/add_funds", {
+ method: 'POST',
+ data: {
+ firstName: $("#firstName").val(),
+ lastName: $("#lastName").val(),
+ fundsAmount: $("#fundsAmount").val()
+ },
+ success: function (data) {
+ spinnerStop();
+ if (data.result == "success") {
+ $("dialog").children(".mdl-dialog__actions").children(".mdl-button.close").click()
+ var snackbarContainer = document.querySelector('#demo-toast-example');
+ var showToastButton = document.querySelector('#demo-show-toast');
+ var data = {
+ message: "Thank you! We will send the funds request to your email shortly.",
+ timeout: 10000
+ };
+ snackbarContainer.MaterialSnackbar.showSnackbar(data);
+ } else {
+ var snackbarContainer = document.querySelector('#demo-toast-example');
+ var showToastButton = document.querySelector('#demo-show-toast');
+ var data = {message: data.message};
+ snackbarContainer.MaterialSnackbar.showSnackbar(data);
+ }
+ }
+ });
+ }
+ */
 
 function spinnerStart() {
     $(".mdl-layout__content").css('opacity', 0.5);
@@ -341,12 +371,12 @@ function getTableData() {
             var jdata = data.tableData.statistics;
             var mydata = eval(jdata);
 
-            String.prototype.replaceAll = function(search, replacement) {
+            String.prototype.replaceAll = function (search, replacement) {
                 var target = this;
                 return target.replace(new RegExp(search, 'g'), replacement);
             };
             mydata.sort(function (a, b) {
-                return new Date(a.datestamp.replaceAll("-","/")) < new Date(b.datestamp.replaceAll("-","/"))
+                return new Date(a.datestamp.replaceAll("-", "/")) < new Date(b.datestamp.replaceAll("-", "/"))
             });
             var table = $.makeTable(mydata);
             $(table).appendTo("#tableContent");
@@ -361,7 +391,7 @@ function getTableData() {
 
 
             data.tableData.statistics.sort(function (a, b) {
-                return new Date(a.datestamp.replaceAll("-","/")) > new Date(b.datestamp.replaceAll("-","/"))
+                return new Date(a.datestamp.replaceAll("-", "/")) > new Date(b.datestamp.replaceAll("-", "/"))
             });
             $.each(eval(data.tableData.statistics), function (index, value) {
                 successful.push(value["successful"]);
